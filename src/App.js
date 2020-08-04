@@ -5,19 +5,19 @@ import './App.css';
 
 
 function SearchResults() {
-  const [data, setData] = useState({ h: [] });
-  const [query, setQuery] = useState("");
-  // const today = Math.round((new Date()).getTime() / 1000);
+  const [data, setData] = useState({c:[]});
+  const [query, setQuery] = useState("AMZN");
 
   useEffect(() => {
     let ignore = false;
+    const today = Math.round((new Date()).getTime() / 1000);
+    const lastWeek = Math.round((new Date()).getTime() / 1000 - 600000);
 
     async function fetchData() {
       const result = await axios(
-        "https://finnhub.io/api/v1/stock/candle?symbol="+ query +"&resolution=1&from=1572651390&to=1572910590&token=bsko48frh5rfr4cc6t20"
+        "https://finnhub.io/api/v1/stock/candle?symbol="+ query +"&resolution=1&from="+lastWeek+"&to="+today+"&token=bsko48frh5rfr4cc6t20"
       );
       if (!ignore) setData(result.data);
-      console.log(result.data)
     }
 
     fetchData();
@@ -27,10 +27,10 @@ function SearchResults() {
   }, [query]);
 
   const dataMap = () => {
-    if(data.h){
+    if(data.c){
       return <ul>
-        {data.h.map((item,index) => (
-          <li key={index+item}>
+        {data.c.map((item,index) => (
+          <li key={index.toString()}>
             {item}
           </li>
         ))}
