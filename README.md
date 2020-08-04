@@ -1,3 +1,11 @@
+Bruce Davidson's Computershare recruitment test - UI Developer
+
+<b>Sources</b><br />
+Create react app - https://create-react-app.dev/
+Data fetching quickstart - https://reactjs.org/docs/hooks-faq.html#how-can-i-do-data-fetching-with-hooks
+axios http client - https://www.npmjs.com/package/axios
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
