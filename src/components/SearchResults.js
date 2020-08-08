@@ -4,7 +4,9 @@ import * as Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import Spinner from 'react-bootstrap/Spinner';
+
+
+import PriceCards from './PriceCards'
 
 const SearchResults = () => {
   const [data, setData] = useState({});
@@ -81,37 +83,13 @@ const SearchResults = () => {
     options={options}
   />
 
-  // calculate the highest/lowest stock price using ternary so element can render without data
-  const HighStockPrice = (data) => {
-    return <><span>High stock price {data.d ? Math.max.apply(null, data.d) : <Spinner animation="grow" />}</span></>
-  }
-  const LowStockPrice = (data) => {
-    return <><span>Low stock price {data.d ? Math.min.apply(null, data.d) : <Spinner animation="grow" />}</span></>
-  }
-
-  // get average by reducing the array then divide by number of returned entries
-  const AverageStockPrice = (data) => {
-    if (data.d !== undefined) {
-      const average = data.d.reduce(
-        (total, num) => {
-          return total ? total + num : null;
-        }
-      )
-      return <>Average closing price {Math.round(average / data.d.length)}</>
-    }
-    else{
-      return <span>Average closing price <Spinner animation="grow" /> </span>
-    }
-  }
 
   return (
     <>
       <DatePicker selected={startDate} value={startDate} onChange={date => setStartDate(date)} />
       <input value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
       <HighStocksChart />
-      <HighStockPrice d={data.c} />
-      <LowStockPrice d={data.l} />
-      <AverageStockPrice d={data.c} />
+      <PriceCards close={data.c} low={data.l} />
     </>
   );
 }
