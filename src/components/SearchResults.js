@@ -4,109 +4,72 @@ import * as Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import Spinner from 'react-bootstrap/Spinner';
 
 const SearchResults = () => {
   const [data, setData] = useState({});
   const [query, setQuery] = useState("AMZN");
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());  //always load on today's date
 
+  // change data based on user's selection of date or company
   useEffect(() => {
     let ignore = false;
-    // const today = Math.round((new Date()).getTime() / 1000);
-    // const lastWeek = Math.round((startDate).getTime() / 1000)-600000;
-    const queryDate = Math.round(new Date(startDate).getTime() / 1000)
-    const lastWeek = queryDate - 600000;
-    // console.log(Math.round(new Date(startDate).getTime() / 1000))
+    const queryDate = Math.round(new Date(startDate).getTime() / 1000) // change format for query
+    const lastWeek = queryDate - 600000; // calculate for previous 7 days
     async function fetchData() {
       const result = await axios(
         "https://finnhub.io/api/v1/stock/candle?symbol=" + query + "&resolution=60&from=" + lastWeek + "&to=" + queryDate + "&token=bsko48frh5rfr4cc6t20"
       );
       if (!ignore) setData(result.data);
-      // console.log(startDate)
-      // console.log(new Date(queryDate * 1000).toLocaleDateString('UTC', { year: 'numeric', month: 'long', day: 'numeric' }))
     }
-
     fetchData();
     return () => {
       ignore = true;
     };
   }, [query, startDate]);
-  // console.log(data.t ? data.t.map((c,index) => c.keys()) : null)
-  // console.log(data.t ? data.t.map((t,index) => t.find(e => e)): null)
-  // console.log(data ? data :null)
-  const dataMap = () => {
-    if (data.c && data.t) {
-      return <ul>
-        {data.c.map((item, index) => (
-          <li key={index.toString()}>
-            {item}
-          </li>
-        ))}
-        {data.t.map((item, index) => (
-          <li key={index.toString()}>
-            {new Date(item * 1000).toLocaleDateString('UTC', { year: 'numeric', month: 'long', day: 'numeric' })}
-            {/* {new Date(item * 1000).toLocaleDateString('UTC', {year: 'numeric', month: 'numeric', day: 'numeric'} )} */}
-          </li>
-        ))}
-      </ul>
-    }
-    else {
-      return <span>enter a company</span>
-    }
+
+  // make fresh arrays capable of rendering on highcharts stock candles chart
+  let chartDataCandles = []
+  if (data.c !== undefined) {
+    data.c.map((item, i) =>
+      chartDataCandles.push(
+        [data.t[i] * 1000,
+        data.o[i],
+        data.h[i],
+        data.l[i],
+          item,],
+      )
+    );
   }
 
-   let chartData = []
-  // const combineArrays = () => {
-    if(data.c !== undefined){
-      data.c.map((item, i) =>
-      // Object.assign({}, item, data.t[i])
-      chartData.push(
-        [data.o[i]],
-        [data.h[i]],
-        [data.l[i]],
-        [item],
-        [data.t[i]],
-        [data.v[i]],
-        )
-
-      );
-    }
-    console.log(chartData)
-  // }
-
+  // highcharts uses an object of otions to populate chart.
+  // chartDataCandles is a combination of results bundles into individual arrays per index entry
   const options = {
     title: {
-      text: 'My stock chart'
+      text: query + ' stock chart'
     },
-    // series: [{
-    //   data: [1, 2, 3]
-    // }],
     series: [
-      // {data: [data.c]},
-      // {data: [data.h]},
-      // {data: data.l},
-      // {data: data.o},
-      // {data: data.v},
       {
         type: 'candlestick',
         name: 'AAPL',
-        data: [ data.c],
+        data: chartDataCandles,
       },
     ]
   }
 
-  const MyStockChart = () => <HighchartsReact
+  // basics of rendering chart
+  const HighStocksChart = () => <HighchartsReact
     highcharts={Highcharts}
     constructorType={'stockChart'}
     options={options}
   />
 
+  // calculate the highest/lowest stock price using ternary so element can render without data
   const HighStockPrice = (data) => {
-    return <><span>High stock price {data.d ? Math.max.apply(null, data.d) : '...'}</span></>
+    return <><span>High stock price {data.d ? Math.max.apply(null, data.d) : <Spinner animation="grow" />}</span></>
   }
-
   const LowStockPrice = (data) => {
-    return <><span>Low stock price {data.d ? Math.min.apply(null, data.d) : '...'}</span></>
+    return <><span>Low stock price {data.d ? Math.min.apply(null, data.d) : <Spinner animation="grow" />}</span></>
   }
 
   // get average by reducing the array then divide by number of returned entries
@@ -120,22 +83,18 @@ const SearchResults = () => {
       return <>Average closing price {Math.round(average / data.d.length)}</>
     }
     else{
-      return 'Average closing price ...'
+      return <span>Average closing price <Spinner animation="grow" /> </span>
     }
   }
 
-
-  // console.log(Date.parse(startDate).getTime()/1000 )
-  // console.log('startDate :', Date.parse(startDate), new Date(startDate) )
   return (
     <>
       <DatePicker selected={startDate} value={startDate} onChange={date => setStartDate(date)} />
       <input value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
-      {dataMap()}
+      <HighStocksChart />
       <HighStockPrice d={data.c} />
       <LowStockPrice d={data.l} />
       <AverageStockPrice d={data.c} />
-      <MyStockChart />
     </>
   );
 }
