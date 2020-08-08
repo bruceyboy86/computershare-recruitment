@@ -4,6 +4,9 @@ import * as Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import Form from 'react-bootstrap/Form'
+import Col from 'react-bootstrap/Col'
+import Row from 'react-bootstrap/Row'
 
 
 import PriceCards from './PriceCards'
@@ -48,20 +51,20 @@ const SearchResults = () => {
   // chartDataCandles is a combination of results bundles into individual arrays per index entry
   const options = {
     title: {
-      text: query + ' stock chart'
+      text: query + ' shares'
     },
     rangeSelector: {
-      enabled:false,
+      enabled: false,
     },
     backgroundColor: 'transparent',
     legend: {
       enabled: false,
       borderColor: 'transparent'
     },
-    scrollbar:{
+    scrollbar: {
       showFull: false
     },
-    navigator:{
+    navigator: {
       enabled: false
     },
     credits: {
@@ -86,10 +89,32 @@ const SearchResults = () => {
 
   return (
     <>
-      <DatePicker selected={startDate} value={startDate} onChange={date => setStartDate(date)} />
-      <input value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
-      <HighStocksChart />
-      <PriceCards close={data.c} low={data.l} />
+      <Row>
+        <Col>
+          <Form>
+            <Form.Row>
+              <Col>
+                <Form.Label>Company id</Form.Label>
+                <Form.Control value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
+              </Col>
+              <Col>
+                <Form.Label>Week ending on selected day</Form.Label><br />
+                <DatePicker className='datePickerForm form-control' selected={startDate} value={startDate} onChange={date => setStartDate(date)} />
+              </Col>
+            </Form.Row>
+          </Form>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <PriceCards close={data.c} low={data.l} />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <HighStocksChart />
+        </Col>
+      </Row>
     </>
   );
 }
