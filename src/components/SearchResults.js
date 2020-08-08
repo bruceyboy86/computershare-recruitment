@@ -48,6 +48,23 @@ const SearchResults = () => {
     title: {
       text: query + ' stock chart'
     },
+    rangeSelector: {
+      enabled:false,
+    },
+    backgroundColor: 'transparent',
+    legend: {
+      enabled: false,
+      borderColor: 'transparent'
+    },
+    scrollbar:{
+      showFull: false
+    },
+    navigator:{
+      enabled: false
+    },
+    credits: {
+      enabled: false
+    },
     series: [
       {
         type: 'candlestick',
