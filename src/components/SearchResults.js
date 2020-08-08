@@ -19,9 +19,11 @@ const SearchResults = () => {
     // console.log(Math.round(new Date(startDate).getTime() / 1000))
     async function fetchData() {
       const result = await axios(
-        "https://finnhub.io/api/v1/stock/candle?symbol=" + query + "&resolution=D&from=" + lastWeek + "&to=" + queryDate + "&token=bsko48frh5rfr4cc6t20"
+        "https://finnhub.io/api/v1/stock/candle?symbol=" + query + "&resolution=60&from=" + lastWeek + "&to=" + queryDate + "&token=bsko48frh5rfr4cc6t20"
       );
       if (!ignore) setData(result.data);
+      // console.log(startDate)
+      // console.log(new Date(queryDate * 1000).toLocaleDateString('UTC', { year: 'numeric', month: 'long', day: 'numeric' }))
     }
 
     fetchData();
@@ -29,7 +31,6 @@ const SearchResults = () => {
       ignore = true;
     };
   }, [query, startDate]);
-  // console.log(data)
   // console.log(data.t ? data.t.map((c,index) => c.keys()) : null)
   // console.log(data.t ? data.t.map((t,index) => t.find(e => e)): null)
   // console.log(data ? data :null)
@@ -54,6 +55,25 @@ const SearchResults = () => {
     }
   }
 
+   let chartData = []
+  // const combineArrays = () => {
+    if(data.c !== undefined){
+      data.c.map((item, i) =>
+      // Object.assign({}, item, data.t[i])
+      chartData.push(
+        [data.o[i]],
+        [data.h[i]],
+        [data.l[i]],
+        [item],
+        [data.t[i]],
+        [data.v[i]],
+        )
+
+      );
+    }
+    console.log(chartData)
+  // }
+
   const options = {
     title: {
       text: 'My stock chart'
@@ -70,7 +90,7 @@ const SearchResults = () => {
       {
         type: 'candlestick',
         name: 'AAPL',
-        data: [data.t, data.o, data.h, data.l, data.c],
+        data: [ data.c],
       },
     ]
   }
@@ -86,12 +106,10 @@ const SearchResults = () => {
   }
 
   const LowStockPrice = (data) => {
-
     return <><span>Low stock price {data.d ? Math.min.apply(null, data.d) : '...'}</span></>
-
   }
 
-  // get average by reducing the array then divide by number of returned days (5)
+  // get average by reducing the array then divide by number of returned entries
   const AverageStockPrice = (data) => {
     if (data.d !== undefined) {
       const average = data.d.reduce(
@@ -99,7 +117,7 @@ const SearchResults = () => {
           return total ? total + num : null;
         }
       )
-      return <>Average closing price {average / 5}</>
+      return <>Average closing price {Math.round(average / data.d.length)}</>
     }
     else{
       return 'Average closing price ...'
