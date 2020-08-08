@@ -19,7 +19,7 @@ const SearchResults = () => {
     // console.log(Math.round(new Date(startDate).getTime() / 1000))
     async function fetchData() {
       const result = await axios(
-        "https://finnhub.io/api/v1/stock/candle?symbol="+ query +"&resolution=D&from="+lastWeek+"&to="+queryDate+"&token=bsko48frh5rfr4cc6t20"
+        "https://finnhub.io/api/v1/stock/candle?symbol=" + query + "&resolution=D&from=" + lastWeek + "&to=" + queryDate + "&token=bsko48frh5rfr4cc6t20"
       );
       if (!ignore) setData(result.data);
     }
@@ -34,22 +34,22 @@ const SearchResults = () => {
   // console.log(data.t ? data.t.map((t,index) => t.find(e => e)): null)
   // console.log(data ? data :null)
   const dataMap = () => {
-    if(data.c && data.t){
+    if (data.c && data.t) {
       return <ul>
-        {data.c.map((item,index) => (
+        {data.c.map((item, index) => (
           <li key={index.toString()}>
             {item}
           </li>
         ))}
-        {data.t.map((item,index) => (
+        {data.t.map((item, index) => (
           <li key={index.toString()}>
-            {new Date(item * 1000).toLocaleDateString('UTC', { year: 'numeric', month: 'long', day: 'numeric'})}
+            {new Date(item * 1000).toLocaleDateString('UTC', { year: 'numeric', month: 'long', day: 'numeric' })}
             {/* {new Date(item * 1000).toLocaleDateString('UTC', {year: 'numeric', month: 'numeric', day: 'numeric'} )} */}
           </li>
         ))}
       </ul>
     }
-    else{
+    else {
       return <span>enter a company</span>
     }
   }
@@ -70,8 +70,8 @@ const SearchResults = () => {
       {
         type: 'candlestick',
         name: 'AAPL',
-        data: [data.t,data.o,data.h,data.l,data.c],
-    },
+        data: [data.t, data.o, data.h, data.l, data.c],
+      },
     ]
   }
 
@@ -82,30 +82,42 @@ const SearchResults = () => {
   />
 
   const HighStockPrice = (data) => {
-    if(data){
-      return <><span>High stock price {data.d ? Math.max.apply(null, data.d) : '...'}</span></>
-    }
+    return <><span>High stock price {data.d ? Math.max.apply(null, data.d) : '...'}</span></>
   }
 
   const LowStockPrice = (data) => {
-    if(data){
-      return <><span>Low stock price {data.d ? Math.min.apply(null, data.d) : '...'}</span></>
+
+    return <><span>Low stock price {data.d ? Math.min.apply(null, data.d) : '...'}</span></>
+
+  }
+
+  // get average by reducing the array then divide by number of returned days (5)
+  const AverageStockPrice = (data) => {
+    if (data.d !== undefined) {
+      const average = data.d.reduce(
+        (total, num) => {
+          return total ? total + num : null;
+        }
+      )
+      return <>Average closing price {average / 5}</>
+    }
+    else{
+      return 'Average closing price ...'
     }
   }
 
 
-
-
-// console.log(Date.parse(startDate).getTime()/1000 )
-// console.log('startDate :', Date.parse(startDate), new Date(startDate) )
+  // console.log(Date.parse(startDate).getTime()/1000 )
+  // console.log('startDate :', Date.parse(startDate), new Date(startDate) )
   return (
     <>
-        <DatePicker selected={startDate} value={startDate} onChange={date => setStartDate(date)} />
-        <input value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
-        {dataMap()}
-        <HighStockPrice d={data.c} />
-        <LowStockPrice d={data.l} />
-        <MyStockChart />
+      <DatePicker selected={startDate} value={startDate} onChange={date => setStartDate(date)} />
+      <input value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
+      {dataMap()}
+      <HighStockPrice d={data.c} />
+      <LowStockPrice d={data.l} />
+      <AverageStockPrice d={data.c} />
+      <MyStockChart />
     </>
   );
 }
