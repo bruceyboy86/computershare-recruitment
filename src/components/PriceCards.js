@@ -10,7 +10,7 @@ const PriceCards = (props) => {
     return <><span>{data.d ? Math.round(Math.max.apply(null, data.d)) : <Spinner animation="grow" />}</span></>
   }
   const LowStockPrice = (data) => {
-    return <>{data.d ? Math.min.apply(null, data.d) : <Spinner animation="grow" />}</>
+    return <>{data.d ? Math.round(Math.min.apply(null, data.d)) : <Spinner animation="grow" />}</>
   }
 
   // get average by reducing the array then divide by number of returned entries
@@ -32,9 +32,9 @@ const PriceCards = (props) => {
       <CardDeck>
         <Card>
           <Card.Body>
-            <Card.Title>Maximum share price</Card.Title>
+            <Card.Title>Minimum share price</Card.Title>
             <Card.Text>
-              <HighStockPrice d={props.close} />
+              <LowStockPrice d={props.low} />
             </Card.Text>
           </Card.Body>
         </Card>
@@ -48,9 +48,9 @@ const PriceCards = (props) => {
         </Card>
         <Card>
           <Card.Body>
-            <Card.Title>Minimum share price</Card.Title>
+            <Card.Title>Maximum share price</Card.Title>
             <Card.Text>
-              <LowStockPrice d={props.low} />
+              <HighStockPrice d={props.close} />
             </Card.Text>
           </Card.Body>
         </Card>

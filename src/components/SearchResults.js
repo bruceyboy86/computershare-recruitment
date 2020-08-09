@@ -6,13 +6,15 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
+import Card from 'react-bootstrap/Card'
 import Row from 'react-bootstrap/Row'
-
-
 import PriceCards from './PriceCards'
+import NewsCarousel from './NewsCarousel'
 
 const SearchResults = () => {
   const [data, setData] = useState({});
+  const [info, setCompanyInfo] = useState({});
+  const [news, setCompanyNews] = useState({});
   const [query, setQuery] = useState("AMZN");
   const [startDate, setStartDate] = useState(new Date());  //always load on today's date
 
@@ -21,17 +23,30 @@ const SearchResults = () => {
     let ignore = false;
     const queryDate = Math.round(new Date(startDate).getTime() / 1000) // change format for query
     const lastWeek = queryDate - 600000; // calculate for previous 7 days
+    const monthOfNews = new Date(startDate) // prepare date format for rolling back a month
+    monthOfNews.setUTCDate(monthOfNews.getUTCDate() - 30); // one month's worth of news
     async function fetchData() {
       const result = await axios(
         "https://finnhub.io/api/v1/stock/candle?symbol=" + query + "&resolution=60&from=" + lastWeek + "&to=" + queryDate + "&token=bsko48frh5rfr4cc6t20"
       );
-      if (!ignore) setData(result.data);
+      const CompanyInfo = await axios(
+        "https://finnhub.io/api/v1/stock/profile2?symbol=" + query + "&token=bsko48frh5rfr4cc6t20"
+      );
+      const CompanyNews = await axios(
+        "https://finnhub.io/api/v1/company-news?symbol=" + query + "&from=" + monthOfNews.toISOString().split('T')[0] + "&to=" + startDate.toISOString().split('T')[0] + "&token=bsko48frh5rfr4cc6t20"
+      );
+      if (!ignore) {
+        setCompanyInfo(CompanyInfo.data)
+        setCompanyNews(CompanyNews.data)
+        setData(result.data)
+      };
     }
     fetchData();
     return () => {
       ignore = true;
     };
   }, [query, startDate]);
+
 
   // make fresh arrays capable of rendering on highcharts stock candles chart
   let chartDataCandles = []
@@ -51,7 +66,7 @@ const SearchResults = () => {
   // chartDataCandles is a combination of results bundles into individual arrays per index entry
   const options = {
     title: {
-      text: query + ' shares'
+      text: info.name + ' shares'
     },
     rangeSelector: {
       enabled: false,
@@ -103,6 +118,23 @@ const SearchResults = () => {
               </Col>
             </Form.Row>
           </Form>
+        </Col>
+      </Row>
+      <Row>
+        <Col md={3}>
+          <Card>
+            <a title={info.name} target="_blank" rel="noopener noreferrer" href={info.weburl}>
+              <Card.Img variant="top" src={info.logo} />
+            </a>
+            <Card.Body>
+              <Card.Text>
+                {info.name}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col>
+          <NewsCarousel news={news} />
         </Col>
       </Row>
       <Row>
