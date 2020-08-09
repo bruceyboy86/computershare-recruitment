@@ -1,7 +1,37 @@
-$font-stack: Helvetica, sans-serif;
-$primary-color: #333;
-
 body {
   font: 100% $font-stack;
   color: $primary-color;
+  background-color: $background-colour;
+}
+.row{
+  margin-bottom: 2em;
+}
+.jumbotron{
+  background-color: $light-card-background;
+}
+.search-input{
+  border: 1px solid #344050;
+  background-color: $light-card-background;
+  color: $primary-color;
+  &:focus{
+    background-color: $focus-form-background;
+    color: $primary-color;
+  }
+}
+.react-datepicker-wrapper{
+  width: 100%;
+  .datePickerForm{
+    border: 1px solid #344050;
+    background-color: $light-card-background;
+    color: $primary-color;
+    border-radius: 50rem;
+    &:focus{
+      background-color: $focus-form-background;
+      color: $primary-color;
+    }
+  }
+}
+.active.carousel-item, .carousel-item-next,
+.carousel-item-prev {
+  height: 26.5em;
 }

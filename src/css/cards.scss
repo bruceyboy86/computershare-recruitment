@@ -1,0 +1,13 @@
+.card{
+  border: none;
+  background-color: transparent;
+  .card-body{
+    border:1px solid $light-card-background;
+    border-radius: 0.4rem;
+    background-color: $light-card-background;
+  }
+  .card-img-top{
+    position: relative;
+    margin-bottom: -5px;
+  }
+}

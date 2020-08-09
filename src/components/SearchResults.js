@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Row from 'react-bootstrap/Row'
+import Jumbotron from 'react-bootstrap/Jumbotron'
 import PriceCards from './PriceCards'
 import NewsCarousel from './NewsCarousel'
 
@@ -15,6 +16,7 @@ const SearchResults = () => {
   const [data, setData] = useState({});
   const [info, setCompanyInfo] = useState({});
   const [news, setCompanyNews] = useState({});
+  const [quote, setCompanyQuote] = useState({});
   const [query, setQuery] = useState("AMZN");
   const [startDate, setStartDate] = useState(new Date());  //always load on today's date
 
@@ -35,9 +37,13 @@ const SearchResults = () => {
       const CompanyNews = await axios(
         "https://finnhub.io/api/v1/company-news?symbol=" + query + "&from=" + monthOfNews.toISOString().split('T')[0] + "&to=" + startDate.toISOString().split('T')[0] + "&token=bsko48frh5rfr4cc6t20"
       );
+      const CompanyQuote = await axios(
+        "https://finnhub.io/api/v1/quote?symbol=" + query + "&token=bsko48frh5rfr4cc6t20"
+      );
       if (!ignore) {
         setCompanyInfo(CompanyInfo.data)
         setCompanyNews(CompanyNews.data)
+        setCompanyQuote(CompanyQuote.data)
         setData(result.data)
       };
     }
@@ -100,17 +106,17 @@ const SearchResults = () => {
     constructorType={'stockChart'}
     options={options}
   />
-
+  console.log(quote)
 
   return (
     <>
-      <Row>
+      <Jumbotron>
         <Col>
           <Form>
             <Form.Row>
               <Col>
                 <Form.Label>Company id</Form.Label>
-                <Form.Control value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
+                <Form.Control className="form-control rounded-pill search-input" value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
               </Col>
               <Col>
                 <Form.Label>Week ending on selected day</Form.Label><br />
@@ -118,6 +124,37 @@ const SearchResults = () => {
               </Col>
             </Form.Row>
           </Form>
+        </Col>
+        <Col md={5}>
+          <Card>
+            <Card.Body>
+              <Card.Text>
+                {info.name}
+              </Card.Text>
+              <Card.Text>
+                Country: {info.country}
+              </Card.Text>
+              <Card.Text>
+                Currency: {info.currency}
+              </Card.Text>
+              <Card.Text>
+                Exchange: {info.exchange}
+              </Card.Text>
+              <Card.Text>
+                Market Capitalisation: {info.marketCapitalization}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Jumbotron>
+      <Row>
+        <Col>
+          <PriceCards close={data.c} low={data.l} />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <HighStocksChart />
         </Col>
       </Row>
       <Row>
@@ -128,23 +165,22 @@ const SearchResults = () => {
             </a>
             <Card.Body>
               <Card.Text>
-                {info.name}
+                Current price: {quote.c}
+              </Card.Text>
+              <Card.Text>
+                High price of the day price: {quote.c}
+              </Card.Text>
+              <Card.Text>
+                Low price of the day: {quote.c}
+              </Card.Text>
+              <Card.Text>
+                Previous close price: {quote.c}
               </Card.Text>
             </Card.Body>
           </Card>
         </Col>
         <Col>
           <NewsCarousel news={news} />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <PriceCards close={data.c} low={data.l} />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <HighStocksChart />
         </Col>
       </Row>
     </>
