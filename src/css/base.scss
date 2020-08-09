@@ -8,6 +8,7 @@ body {
 }
 .jumbotron{
   background-color: $light-card-background;
+  padding: 2rem 1rem;
 }
 .search-input{
   border: 1px solid #344050;
@@ -33,5 +34,20 @@ body {
 }
 .active.carousel-item, .carousel-item-next,
 .carousel-item-prev {
-  height: 26.5em;
+  height: 25.4em;
+  img{
+    border-radius: 0.3rem;
+    filter: brightness(35%);
+  }
+}
+.highcharts-container{
+  border-radius: 0.3rem;
+}
+.outstandingShare {
+  text-align: center;
+  font-size: xx-large;
+}
+.outstandingShareTitle {
+  text-align: center;
+  padding: 4em 0 0 0;
 }

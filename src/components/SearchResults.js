@@ -72,7 +72,8 @@ const SearchResults = () => {
   // chartDataCandles is a combination of results bundles into individual arrays per index entry
   const options = {
     title: {
-      text: info.name + ' shares'
+      text: info.name + ' shares',
+      style: { "color": '#c8baee' }
     },
     rangeSelector: {
       enabled: false,
@@ -91,6 +92,9 @@ const SearchResults = () => {
     credits: {
       enabled: false
     },
+    chart: {
+      backgroundColor: '#132238'
+    },
     series: [
       {
         type: 'candlestick',
@@ -106,55 +110,67 @@ const SearchResults = () => {
     constructorType={'stockChart'}
     options={options}
   />
-  console.log(quote)
 
   return (
     <>
       <Jumbotron>
-        <Col>
-          <Form>
-            <Form.Row>
-              <Col>
-                <Form.Label>Company id</Form.Label>
-                <Form.Control className="form-control rounded-pill search-input" value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
-              </Col>
-              <Col>
-                <Form.Label>Week ending on selected day</Form.Label><br />
-                <DatePicker className='datePickerForm form-control' selected={startDate} value={startDate} onChange={date => setStartDate(date)} />
-              </Col>
-            </Form.Row>
-          </Form>
-        </Col>
-        <Col md={5}>
-          <Card>
-            <Card.Body>
-              <Card.Text>
-                {info.name}
-              </Card.Text>
-              <Card.Text>
-                Country: {info.country}
-              </Card.Text>
-              <Card.Text>
-                Currency: {info.currency}
-              </Card.Text>
-              <Card.Text>
-                Exchange: {info.exchange}
-              </Card.Text>
-              <Card.Text>
-                Market Capitalisation: {info.marketCapitalization}
-              </Card.Text>
-            </Card.Body>
-          </Card>
-        </Col>
+        <Row>
+
+          <Col md={12}>
+            <Form>
+              <Form.Row>
+                <Col>
+                  <Form.Label>Company id</Form.Label>
+                  <Form.Control className="form-control rounded-pill search-input" value={query} onChange={e => setQuery(e.target.value.toUpperCase())} />
+                </Col>
+                <Col>
+                  <Form.Label>Week ending on ...</Form.Label><br />
+                  <DatePicker className='datePickerForm form-control' selected={startDate} value={startDate} onChange={date => setStartDate(date)} />
+                </Col>
+              </Form.Row>
+            </Form>
+          </Col>
+          <Col md={6}>
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  {info.name}
+                </Card.Text>
+                <Card.Text>
+                  Country: {info.country}
+                </Card.Text>
+                <Card.Text>
+                  Currency: {info.currency}
+                </Card.Text>
+                <Card.Text>
+                  Exchange: {info.exchange}
+                </Card.Text>
+                <Card.Text>
+                  Market Capitalisation: {info.marketCapitalization}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={6}>
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  <p className="outstandingShareTitle">Number of oustanding shares</p>
+                  <p className="outstandingShare">{info.shareOutstanding}</p>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       </Jumbotron>
       <Row>
         <Col>
-          <PriceCards close={data.c} low={data.l} />
+          <HighStocksChart />
         </Col>
       </Row>
       <Row>
         <Col>
-          <HighStocksChart />
+          <PriceCards close={data.c} low={data.l} />
         </Col>
       </Row>
       <Row>
@@ -165,16 +181,16 @@ const SearchResults = () => {
             </a>
             <Card.Body>
               <Card.Text>
-                Current price: {quote.c}
+                Current price: {Math.round(quote.c)}
               </Card.Text>
               <Card.Text>
-                High price of the day price: {quote.c}
+                High price of the day: {Math.round(quote.c)}
               </Card.Text>
               <Card.Text>
-                Low price of the day: {quote.c}
+                Low price of the day: {Math.round(quote.c)}
               </Card.Text>
               <Card.Text>
-                Previous close price: {quote.c}
+                Previous close price: {Math.round(quote.c)}
               </Card.Text>
             </Card.Body>
           </Card>

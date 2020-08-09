@@ -2,7 +2,7 @@ import React from 'react';
 import Carousel from 'react-bootstrap/Carousel'
 
 const NewsCarousel = (props) => {
-
+  console.log(props.news)
   const newsItems = () => {
     if (props.news.length) {
       // only map the latest 5 items of news
@@ -25,7 +25,7 @@ const NewsCarousel = (props) => {
   }
 
   return (
-    <Carousel interval={8000}>
+    <Carousel interval={12000}>
       {newsItems()}
     </Carousel>
   )
