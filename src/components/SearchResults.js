@@ -115,7 +115,6 @@ const SearchResults = () => {
     <>
       <Jumbotron>
         <Row>
-
           <Col md={12}>
             <Form>
               <Form.Row>
@@ -132,7 +131,7 @@ const SearchResults = () => {
           </Col>
           <Col md={6}>
             <Card>
-              <Card.Body>
+              <Card.Body className="companyInfo">
                 <Card.Text>
                   {info.name}
                 </Card.Text>
