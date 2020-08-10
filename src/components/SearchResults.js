@@ -72,7 +72,7 @@ const SearchResults = () => {
   // chartDataCandles is a combination of results bundles into individual arrays per index entry
   const options = {
     title: {
-      text: info.name + ' shares',
+      text: info.name? info.name + ' shares': 'Loading shares',
       style: { "color": '#c8baee' }
     },
     rangeSelector: {
@@ -98,7 +98,7 @@ const SearchResults = () => {
     series: [
       {
         type: 'candlestick',
-        name: 'AAPL',
+        name: query,
         data: chartDataCandles,
       },
     ]
